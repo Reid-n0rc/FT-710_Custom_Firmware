@@ -28,7 +28,7 @@ Record the backup folder's `SHA256SUMS` hash in the test log.
 ## 3. Delivery and the way back to stock
 
 Hard rule 4: **every custom image is an ordinary `.SFL` update file that the radio's own SD-card update installs, and installing a
-factory `.SFL` always restores stock.**
+factory `.SFL` always restores stock.** Large data may follow in a second stage under the conditions in [§3.4](#34-two-stage-install-large-data-on-first-boot).
 
 ### 3.1 How the stock update works (upstream facts)
 
@@ -50,7 +50,7 @@ From `upstream/docs/code/display/update.md` §1 and `upstream/docs/custom-firmwa
 | # | Requirement | How it is checked |
 |---|---|---|
 | D1 | It is a valid `.SFL` that passes every check above, built from the official download by a committed script | `upstream/tools/sfl_encode.py --check FILE.SFL`, in the patch's test log |
-| D2 | It is installed only through the standard SD-card update. No JTAG, SWD, serial-boot or loader-mode (`#UP0`) path is needed to install it | the project's install procedure |
+| D2 | It is installed only through the standard SD-card update (plus, for large data only, a stage 2 that meets §3.4). No JTAG, SWD, serial-boot or loader-mode (`#UP0`) path is needed to install it | the project's install procedure |
 | D3 | **The update path is untouched.** In a DISPLAY image: the update menu and file handling, `sfl_read_header`/`sfl_crc`, `fwobj_*_run`, `rx_boot_*`, `dsp_isp_*`, `sdr_flash_write`, `boot_select_bank` and the bank-flag code are byte-identical to stock. In MAIN: the code DISPLAY relies on to enter serial boot mode, and the status frame that reports versions, behave as in stock. In IFDSP and SDR: nothing that DISPLAY's programming routines depend on changes | a byte-compare of the listed functions (addresses from upstream) in the patch's test log |
 | D4 | The image size stays within the stock limits (DISPLAY bank 6 MiB, IFDSP 640 KiB erase region, SDR exact size) | `sfl_encode.py --check` |
 | D5 | **A factory file always wins.** A custom file's 4 version characters must sort **below** the factory version it is based on, so that if both files sit in `I:\FT-710\`, the update picks the factory file. The scheme is chosen per project and documented (open decision for the first project) | the file name in the test log |
@@ -69,6 +69,31 @@ From `upstream/docs/code/display/update.md` §1 and `upstream/docs/custom-firmwa
 | Settings or calibration damaged | restore from the backups in section 2 |
 
 Every project page must fill in its own version of this table before the first radio test.
+
+### 3.4 Two-stage install: large data on first boot
+
+Decided by the owner on 2026-10-28. Some data is too large for the space the standard update gives an image: the IF DSP update region
+is 640 KiB, and the DISPLAY bank is 6 MiB (upstream `docs/code/display/update.md`). Such data may be installed in two stages:
+
+1. **Stage 1:** all code (custom DISPLAY, MAIN, IF DSP, SDR images as needed) is installed through the standard SD-card update, as
+   for any custom image (D1–D8).
+2. **Stage 2:** on first boot, the custom firmware reads a separate data file from the SD card (only DISPLAY can read the card), checks
+   it, and writes it into flash that the standard update and stock firmware never touch, for example the IF DSP flash above its 640 KiB
+   update region.
+
+It is allowed only if all three hold: (a) all code arrives in stage 1; (b) stage 2 writes only flash that the standard update and
+stock firmware never touch; (c) installing factory `.SFL` files still fully restores stock behaviour.
+
+| # | Requirement | How it is checked |
+|---|---|---|
+| S1 | The target flash area is outside every region the standard update erases or writes, and stock firmware never reads or writes it (cite upstream) | the project page, with upstream citations |
+| S2 | The data file has a header (magic, format version, length, SHA-256); custom firmware checks it before writing and verifies the flash after writing | offline test of the writer and the verifier |
+| S3 | **Commit marker last:** the data is written and verified first, then a small header in flash; a power loss before that leaves no header, so the copy restarts on the next boot | power-loss test (offline or simulated) |
+| S4 | **Fail soft:** missing, partial or corrupt data disables only the feature that needs it; the radio otherwise works normally | test with no file, a truncated file and a corrupted file |
+| S5 | The data file's name and folder never match the update pattern (`I:\FT-710\FT-710_<IMG>_V????.sfl`), so the update menu never lists it | the file name in the install procedure |
+| S6 | Stage 2 is separate code: the stock update functions stay byte-identical (D3) | the D3 byte-compare |
+| S7 | Stage 2 never changes a flash chip's status-register or block-protection bits, and never touches OTP or fuses (§4) | code review + the §4 comparison |
+| S8 | The way back: factory `.SFL` files overwrite all custom code, and stock ignores the stage-2 data. The custom firmware offers an "erase the stage-2 data" action for a fully clean return, and the project page documents it | the round-trip test (D7) also checks stock behaviour with the data left in place |
 
 ## 4. Locks and option settings never change
 

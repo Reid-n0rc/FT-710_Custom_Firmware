@@ -30,6 +30,9 @@ request template mirrors it, so an agent fills in the evidence and the reviewer 
 - [ ] **Factory file wins:** the custom version characters sort below the factory version (D5).
 - [ ] **Way back:** the project page has the "if something goes wrong" table filled in, and the planned first radio test ends with
       reinstalling the factory `.SFL` (D7).
+- [ ] **Two-stage install (if used):** the evidence for S1–S8 is in the pull request: the target flash is outside the update regions,
+      header and verify, commit marker last, fail-soft tests, file name outside the update pattern, no protection-bit changes, and an
+      erase action ([safety.md §3.4](safety.md#34-two-stage-install-large-data-on-first-boot)).
 - [ ] Transmit changes keep the radio within licence limits, with a dummy-load test planned.
 
 ### Upstream-sync pull requests

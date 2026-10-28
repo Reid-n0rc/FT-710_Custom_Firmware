@@ -19,6 +19,7 @@ Closes #N  <!-- or "Refs #N" for one step of a larger issue; the issue-link chec
 - Lock / option areas byte-identical to stock (safety.md §4):
 - Version characters sort below the factory version (D5):
 - Way back to stock:
+- Two-stage data install (safety.md §3.4, S1–S8), or "not used":
 
 ## Radio
 <!-- "No radio involved", or: what was done, the owner's approval (date, exact action), backup reference, result. -->

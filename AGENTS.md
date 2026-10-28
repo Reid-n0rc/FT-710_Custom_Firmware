@@ -23,6 +23,11 @@ pinned git submodule. This repository holds what **changes** the radio: project 
    and the version handling stay as in stock, so installing a factory `.SFL` always restores stock firmware. Every patch is tested
    offline for this, and its first radio test ends by reinstalling stock
    ([docs/safety.md](docs/safety.md#delivery-and-the-way-back-to-stock)).
+   **Two-stage install (allowed, decided 2026-10-28):** large data that doesn't fit in an image (for example RADE's neural-network
+   weights) may be written by custom firmware on first boot from a separate data file on the SD card, but only if all three hold:
+   (a) all code arrives through the standard update (stage 1); (b) stage 2 writes only flash that the standard update and stock
+   firmware never touch; (c) installing factory `.SFL` files still fully restores stock behaviour. Requirements S1–S8 in
+   [docs/safety.md](docs/safety.md#34-two-stage-install-large-data-on-first-boot).
 5. **Lock bits and option settings are never set or changed from stock.** That includes the RX651 option-setting memory and ID code,
    RT685 OTP fuses and boot configuration, FPGA bitstream security options and configuration-flash protection, and any flash
    write-protect or debug-lock setting on any chip. The bytes are compared with stock for every image before a pull request
