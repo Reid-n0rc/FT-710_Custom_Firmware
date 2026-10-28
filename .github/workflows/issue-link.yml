@@ -1,0 +1,31 @@
+name: issue-link
+# Every pull request starts from an issue in this repository: the description must contain "Closes #N", "Fixes #N",
+# "Resolves #N" or "Refs #N". Upstream-sync pull requests (branch upstream-sync/*) are exempt.
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+permissions:
+  issues: read
+  pull-requests: read
+jobs:
+  issue-link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check that the PR links an issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          case "$HEAD_REF" in upstream-sync/*) echo "Upstream sync: exempt"; exit 0;; esac
+          body=$(jq -r '.pull_request.body // ""' "$GITHUB_EVENT_PATH")
+          n=$(printf '%s' "$body" | grep -ioE '(close[sd]?|fix(e[sd])?|resolve[sd]?|refs?) +#[0-9]+' | head -1 | grep -oE '[0-9]+$' || true)
+          if [ -z "$n" ]; then
+            echo "::error::Link the issue this PR starts from, e.g. 'Closes #12' or 'Refs #12' in the PR description (docs/workflow.md)."
+            exit 1
+          fi
+          if ! gh api "repos/$REPO/issues/$n" --jq '.number' >/dev/null 2>&1; then
+            echo "::error::Issue #$n does not exist in $REPO."
+            exit 1
+          fi
+          echo "Linked issue: #$n"

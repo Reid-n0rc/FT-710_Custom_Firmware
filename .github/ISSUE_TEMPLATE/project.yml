@@ -1,0 +1,31 @@
+name: Project (new custom-firmware feature)
+description: Propose a feature that changes the radio. It gets a project page in docs/projects/.
+labels: ["project", "needs-owner"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What changes for the operator, in a few sentences.
+    validations:
+      required: true
+  - type: textarea
+    id: background
+    attributes:
+      label: Background
+      description: Upstream facts this builds on (upstream file / address), and outside references.
+  - type: textarea
+    id: approach
+    attributes:
+      label: Approach and chips involved
+      description: MAIN, DISPLAY, IFDSP, SDR? How it will be delivered (standard SD-card update only, docs/safety.md).
+  - type: dropdown
+    id: radio
+    attributes:
+      label: Radio involvement
+      options:
+        - "None: design and offline work only"
+        - "Read-only access (CAT queries, measurements)"
+        - "Writes to a radio (SD-card update, EEPROM, CAT set): needs the owner's approval each time"
+    validations:
+      required: true

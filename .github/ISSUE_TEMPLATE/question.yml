@@ -1,0 +1,10 @@
+name: Question
+description: Ask about a project, the process or the design.
+labels: ["question"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+    validations:
+      required: true

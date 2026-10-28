@@ -1,0 +1,15 @@
+# Never commit firmware or radio data (docs/safety.md, "What is never committed")
+Firmware/
+build/
+*.SFL
+*.sfl
+*.bin
+*.hex
+*.mot
+*.srec
+backup-*/
+ghidra/
+*.gpr
+*.rep/
+__pycache__/
+.DS_Store

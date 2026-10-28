@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: A fact about the stock firmware
+    url: https://github.com/Reid-n0rc/FT-710_Firmware/issues/new/choose
+    about: Findings and corrections about how the stock firmware works belong in FT-710_Firmware.

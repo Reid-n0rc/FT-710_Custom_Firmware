@@ -1,0 +1,73 @@
+name: upstream-sync
+# Keeps up with Reid-n0rc/FT-710_Firmware (docs/upstream.md). Daily and on demand: if upstream main has moved past the
+# upstream/ pin, open (or update) a pull request that moves the pin and lists what changed upstream. The owner reviews and merges.
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: false
+      - name: Compare the pin with upstream main
+        id: cmp
+        run: |
+          set -euo pipefail
+          url=$(git config -f .gitmodules submodule.upstream.url)
+          old=$(git ls-tree HEAD upstream | awk '{print $3}')
+          new=$(git ls-remote "$url" refs/heads/main | cut -f1)
+          echo "old=$old" >> "$GITHUB_OUTPUT"; echo "new=$new" >> "$GITHUB_OUTPUT"; echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "pin $old, upstream main $new"
+      - name: Open or update the sync pull request
+        if: steps.cmp.outputs.old != steps.cmp.outputs.new
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OLD: ${{ steps.cmp.outputs.old }}
+          NEW: ${{ steps.cmp.outputs.new }}
+          URL: ${{ steps.cmp.outputs.url }}
+        run: |
+          set -euo pipefail
+          git clone --quiet --filter=blob:none --no-checkout "$URL" /tmp/up
+          {
+            echo "Moves the \`upstream/\` pin from \`${OLD:0:7}\` to \`${NEW:0:7}\` ([compare](https://github.com/Reid-n0rc/FT-710_Firmware/compare/$OLD...$NEW))."
+            echo
+            echo "**Reviewer:** check whether any project page in \`docs/projects/\` cites a file that changed (docs/review.md)."
+            echo
+            echo "### Upstream commits"
+            git -C /tmp/up log --format='- `%h` %s' "$OLD..$NEW" | head -200
+            echo
+            echo "### Changed upstream docs"
+            git -C /tmp/up diff --name-only "$OLD" "$NEW" -- docs | sed 's/^/- /' | head -200
+            echo
+            echo "### Other changed upstream files"
+            git -C /tmp/up diff --name-only "$OLD" "$NEW" -- . ':!docs' | sed 's/^/- /' | head -200
+          } > /tmp/body.md
+          branch="upstream-sync/${NEW:0:7}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git update-index --cacheinfo "160000,$NEW,upstream"
+          git commit -m "Move the upstream pin to ${NEW:0:7}" -m "Upstream: Reid-n0rc/FT-710_Firmware@$NEW"
+          git push --force origin "$branch"
+          open=$(gh pr list --label upstream-sync --state open --json number,headRefName --jq '.[0].number // empty')
+          if [ -n "$open" ]; then
+            old_branch=$(gh pr view "$open" --json headRefName --jq .headRefName)
+            if [ "$old_branch" != "$branch" ]; then
+              gh pr close "$open" --delete-branch --comment "Superseded by the sync to ${NEW:0:7}."
+              open=""
+            fi
+          fi
+          if [ -z "$open" ]; then
+            gh pr create --base main --head "$branch" --title "Upstream sync: FT-710_Firmware ${NEW:0:7}" --body-file /tmp/body.md --label upstream-sync --label needs-review
+          else
+            gh pr edit "$open" --body-file /tmp/body.md
+          fi

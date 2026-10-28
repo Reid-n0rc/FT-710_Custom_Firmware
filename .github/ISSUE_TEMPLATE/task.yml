@@ -1,0 +1,32 @@
+name: Task (one step of a project)
+description: One step with a single verifiable result.
+labels: []
+body:
+  - type: input
+    id: project
+    attributes:
+      label: Project issue
+      description: "e.g. #1"
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Result
+      description: The one deliverable you can verify (a doc section, a script plus its test, a patch plus its offline check).
+    validations:
+      required: true
+  - type: textarea
+    id: test
+    attributes:
+      label: How it will be checked
+  - type: dropdown
+    id: radio
+    attributes:
+      label: Radio involvement
+      options:
+        - "None"
+        - "Read-only access"
+        - "Writes to a radio: needs the owner's approval each time"
+    validations:
+      required: true

@@ -1,0 +1,22 @@
+name: docs-check
+# The documentation standard (docs/documentation-standard.md): docs travel with every change, project pages have the
+# required sections, relative links resolve. Runs tools/check_docs.py.
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: false
+      - name: Check the docs
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ -n "$BASE" ]; then python3 -I tools/check_docs.py --base "$BASE"; else python3 -I tools/check_docs.py; fi
