@@ -19,6 +19,7 @@ radio without the owner's explicit approval, each time.
 |---|---|---|---|
 | FreeDV RADE as a built-in mode | [#1](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/1) | planning | [docs/projects/rade.md](docs/projects/rade.md) |
 | US 60 m: 2026 FCC rules (5351.5–5366.5 kHz segment, memories, split, XIT) | [#2](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/2) | planning | [docs/projects/us-60m-2026.md](docs/projects/us-60m-2026.md) |
+| Doom on the DISPLAY CPU (fun project) | [#7](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/7) | step 1 done offline | [docs/projects/doom.md](docs/projects/doom.md) |
 
 ## Where to start
 

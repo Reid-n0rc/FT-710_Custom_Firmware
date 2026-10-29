@@ -17,11 +17,14 @@
 |---|---|---|
 | FreeDV RADE as a built-in mode | [#1](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/1) | [projects/rade.md](projects/rade.md) |
 | US 60 m: 2026 FCC rules | [#2](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/2) | [projects/us-60m-2026.md](projects/us-60m-2026.md) |
+| Doom on the DISPLAY CPU | [#7](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/7) | [projects/doom.md](projects/doom.md) |
 
 ## Tools
 
 | Tool | What it does |
 |---|---|
 | [`tools/check_docs.py`](../tools/check_docs.py) | the `docs-check` CI check: docs travel with changes, project pages have the required sections, relative links resolve |
+| [`tools/ghidra_image.py`](../tools/ghidra_image.py) | rebuilds a decoded stock image (DISPLAY, MAIN, IFDSP) into `build/` from upstream's committed Ghidra project, checked against upstream's SHA-256; for machines that can't reach the Yaesu download |
+| [`tools/display_ram_budget.py`](../tools/display_ram_budget.py) | offline map of the DISPLAY CPU's RAM use: scatter regions, kernel-pool allocations, MMU attributes, address constants in unassigned RAM ([projects/doom.md](projects/doom.md)) |
 | `upstream/tools/sfl_decode.py`, `sfl_encode.py` | decode the official `.SFL` files, build and `--check` new ones (upstream) |
 | `upstream/tools/cat_backup.py` | read-only backup of a radio, including the full EEPROM (upstream) |
