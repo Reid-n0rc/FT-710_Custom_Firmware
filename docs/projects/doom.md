@@ -179,6 +179,7 @@ fallback if step 2 needs more than 2.6 MB).
 | 2026-10-29 | `tools/ghidra_image.py --upstream <FT-710_Firmware @ 12a9988>` for DISPLAY, MAIN, IFDSP (offline) | all three images rebuilt; SHA-256 equal to `upstream/docs/inputs.sha256` |
 | 2026-10-29 | `tools/display_ram_budget.py build/FT-710_DISPLAY_V0108.bin` (offline) | RAM map above; kernel pool 495,608 of 524,288 B used; no address constant in 0x20000060–0x200FFFFF, 0x204FC5F4–0x207FFFFF or 0x2091D570–0x2097FFFF (6 ASCII false hits listed by the tool) |
 | 2026-10-29 | Hand disassembly (capstone) of `reset_in_ram`, `__user_setup_stackheap` 0x201561C0, `__user_initial_stackheap`, `kernel_heap_init`, the pool set-up and allocator, `fb_clear_all` (offline) | as cited in Background |
+| 2026-10-29 | Step 2 inputs: WADs from the Ubuntu 24.04 packages `doom-wad-shareware` 1.9.fixed-4 (multiverse) and `freedoom` 0.13.0-1 (universe), extracted with `apt-get download` + `dpkg-deb -x`, kept outside the repository (never committed) | `doom1.wad` 4,196,020 B, MD5 `f0cefca49926d00903cf57551d901abe` (the canonical DOOM 1.9 shareware file), SHA-256 `1d7d43be501e67d927e415e0b8f3e29c3bf33075e859721816f652a526cac771`; `freedoom1.wad` 28,795,080 B, SHA-256 `5920dd3f11264075dd1488e57b2617c89da71a425491306718c181de3ecdc8cd`; `freedoom2.wad` 28,787,752 B, SHA-256 `5a9315fb7dedac6d11b42034d15b7f6828826b94c84c14078087fa4c97d88474` |
 
 No radio was touched.
 
