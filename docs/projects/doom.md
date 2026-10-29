@@ -125,7 +125,7 @@ the SD-card updater runs inside the DISPLAY bank image (rule 4, [safety.md](../s
 - **Input:** main dial = turn; second encoder = forward/back; keys = fire, use, strafe, weapon; touch for menus; USB keyboard through
   the empty HID chain 0 (0x208DC198).
 - **WAD:** user-supplied on the SD card (Freedoom recommended), read on demand; never committed.
-- **Audio:** silent until the transmit-path check (issue #7).
+- **Audio:** the first version is silent (owner decision, 2026-10-29); audio comes in step 6, after the transmit-path check.
 
 Alternatives considered: a stand-alone DISPLAY image (rejected: removes the updater, rule 4); running on the IFDSP, MAIN or SDR
 (rejected in the issue: no display, too little RAM, or a full FPGA); a reboot-to-Doom mode that reuses GUI memory (kept as a
@@ -189,6 +189,7 @@ No radio was touched.
 | 2026-10-29 | Go ahead with step 1 (free-RAM measurement) | owner (issue #7 conversation) |
 | 2026-10-29 | Doom is launched from a **menu entry** | owner |
 | 2026-10-29 | The owner will get a JTAG probe, so step 5 starts with a volatile JTAG test, and step 1b can run once it arrives | owner |
+| 2026-10-29 | The first version is **silent**; audio waits for step 6 and the transmit-path check | owner |
 
 ## Open questions
 
@@ -198,4 +199,3 @@ No radio was touched.
 - Is the main-stack area (0x2042BC10–0x2044BD7F) really unused below its high-water mark? → step 1b.
 - How small can Doom's zone be with the WAD on the SD card? → step 2.
 - Does the playback-PCM path reach the transmitter? → before step 6 (needs the DSP-side routing documented upstream).
-- Silent first version: the owner hasn't answered yet.
