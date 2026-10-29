@@ -16,7 +16,7 @@ leaves Doom and is back on the radio. It is a fun project, not a radio feature.
 | Step | State | Pull request |
 |---|---|---|
 | 1. Offline: measure the DISPLAY's free RAM | done (offline); two runtime checks wait for the JTAG probe | this branch |
-| 2. Offline: build doomgeneric for the Cortex-A9 and measure code, BSS and the minimum zone | todo | – |
+| 2. Offline: build doomgeneric for the Cortex-A9 and measure code, BSS and the minimum zone ([#8](https://github.com/Reid-n0rc/FT-710_Custom_Firmware/issues/8)) | todo | – |
 | 3. Offline: hook points in the stock image (menu entry, GUI pause, layer, input tap) | todo | – |
 | 4. Offline: build the patched DISPLAY `.SFL` and run the D3/D4/§4 checks | todo | – |
 | 5. Radio: volatile JTAG test, then SD-card install, play, reinstall stock (owner approval each time) | todo | – |
